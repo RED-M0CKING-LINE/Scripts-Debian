@@ -1,0 +1,15 @@
+# Turn .gitignore into an allow list
+*
+!*/
+
+
+# Track these directories
+#!config/**.
+
+# Track these files
+!.gitignore
+!README.md
+
+!git-repo-update-script.sh
+
+
