@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# This is the script i use to update my system
+# This is the WIP version which (tries) to use tmux to run these different tasks in parallel
+
+SUDO='' && [[ $EUID -ne 0 ]] && SUDO='/usr/bin/sudo' && /usr/bin/echo "Authorizing Use Of SUDO Privilages..." && sudo /usr/bin/echo -n
+
+#TODO make the commands run in different tmux panes so they can run concurrently :)
+
+session=upgrade
+window=${session}:0
+pane=${window}.4
+pane_increment=0
+function spawn_pane() {
+	if tmux has-session -t "$session"; then
+	
+	
+	
+	tmux send-keys -t "$pane" C-z 'echo test' Enter
+	tmux select-pane -t "$pane"
+	tmux select-window -t "$window"
+	tmux attach-session -t "$session"
+	
+	else
+	echo "No Session"
+        tmux new-session -d -s "$session" 'echo "new session"'
+	fi
+	pane_increment=pane_increment+1
+}
+
+#tmux new-window -n:${session} 'echo new window'
+spawn_pane
+
+sleep 100
+exit
+
+
+/usr/bin/echo -e "\n\n\a===== APT UPDATE ====="
+$SUDO /usr/bin/apt update
+
+/usr/bin/echo -e "\n\n\a===== APT UPGRADABLE ====="
+/usr/bin/apt list --upgradable
+
+/usr/bin/echo -e "\n\n\a===== APT-FAST DOWNLOAD ====="
+$SUDO /usr/bin/apt-fast upgrade --download-only --assume-yes | grep -v " Download complete: " | grep -v " Verification finished successfully. " | grep -vx "\[DL:.+\]" | grep -vE "^(\n)?$"
+
+/usr/bin/echo -e "\n\n\a===== APT UPGRADE ====="
+$SUDO /usr/bin/apt upgrade
+
+/usr/bin/echo -e "\n\n\a===== APT AUTOREMOVE ====="
+$SUDO /usr/bin/apt autoremove --purge
+
+
+#/usr/bin/echo -e "\n\n\a===== FIRMWARE UPDATES ====="
+#$SUDO /usr/bin/fwupdtool get-updates
+#$SUDO /usr/bin/fwupdtool update
+
+
+/usr/bin/echo -e "\n\n\a===== FLATPAK UPDATE ====="
+/usr/bin/flatpak update --assumeyes
+
+/usr/bin/echo -e "\n\n\a===== FLATPAK AUTOREMOVE ====="
+/usr/bin/flatpak uninstall --unused
+
+
+/usr/bin/echo -e "\n\n\a===== COMPLETE ====="

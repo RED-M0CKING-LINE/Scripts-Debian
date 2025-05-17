@@ -4,12 +4,28 @@
 
 
 # Track these directories
-#!config/**.
+!macros/**.
 
 # Track these files
 !.gitignore
 !README.md
+!LICENSE
 
 !git-repo-update-script.sh
-
-
+!autotype.py
+!fingerpaint.py
+!draw.sh
+!chromium-browser_flatpak_reset.sh
+!ungoogled-chromium-browser_flatpak_reset.sh
+!pause.sh
+!python_simple-http-server.sh
+!usb_power.sh
+!upgrade.sh
+!upgrade.sh.working
+!status_watch-temps.sh
+!tribler_reset_bandwidth.sh
+!sign-file.sh
+!login_script.sh
+!audit_suricata.sh
+!kernel_module-sign-VMs.sh
+!gnome_alphabetize-launcher.sh
